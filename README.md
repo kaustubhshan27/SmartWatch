@@ -7,6 +7,7 @@ Implemented a smart wearable in the form of a wrist watch.
 * NodeMCU
 * DHT11 Sensor
 * NEO-6M GPS Module
+* 0.96 Inch OLED Display
 
 ```markdown
 Syntax highlighted code block
@@ -35,3 +36,14 @@ Your Pages site will use the layout and styles from the Jekyll theme you have se
 ### Support or Contact
 
 Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+
+
+
+
+
+
+
+
+
+
+
