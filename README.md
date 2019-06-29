@@ -4,9 +4,9 @@ Implemented a smart wearable in the form of a wrist watch.
 
 ## Components Used
 
-*NodeMCU
-*DHT11 sensor
-*NEO-6M GPS module
+-NodeMCU
+-DHT11 Sensor
+-NEO-6M GPS Module
 
 ```markdown
 Syntax highlighted code block
