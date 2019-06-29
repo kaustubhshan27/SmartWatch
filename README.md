@@ -1,12 +1,12 @@
-## Welcome to GitHub Pages
+## Project Description
 
-You can use the [editor on GitHub](https://github.com/kaustubhshan27/SmartWatch/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
+Implemented a smart wearable in the form of a wrist watch. 
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+## Components Used
 
-### Markdown
-
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+*NodeMCU
+*DHT11 sensor
+*NEO-6M GPS module
 
 ```markdown
 Syntax highlighted code block
