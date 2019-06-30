@@ -55,7 +55,6 @@ void setup()
 
 void loop()
 {
-
     float temp;
     float hum;
     if(uploadDelay >= 1200)
