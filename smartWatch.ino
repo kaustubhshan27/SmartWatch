@@ -102,7 +102,6 @@ void loop()
         String strMonth = String(month);
         String strYear = String(year).substring(2, 4);
         today = strDate + "/" + strMonth + "/" + strYear;
-        
       }
       display.setCursor(0, 0);
       display.print(today);
