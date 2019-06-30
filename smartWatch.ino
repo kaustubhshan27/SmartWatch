@@ -29,7 +29,6 @@ float Speed;
 
 void setup()
 {
-
   Serial.begin(9600);
   Wire.begin();
   display.begin(SSD1306_SWITCHCAPVCC, 0x3D);//0x3D is I2C address of display
@@ -136,8 +135,8 @@ void loop()
           currentTime = strHour + ":" + strMinute + " AM";
         }
       }
-        display.setCursor(10, 0);
-        display.print(currentTime);
+      display.setCursor(10, 0);
+      display.print(currentTime);
       
       if(gps.speed.isValid())//data goes to thingspeak.com
       {
