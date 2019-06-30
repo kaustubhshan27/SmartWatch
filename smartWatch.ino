@@ -112,18 +112,18 @@ void loop()
       {
         unsigned int Hour = gps.time.hour();
         unsigned int Minute = gps.time.minute();
-        Minute = Minute + 30;
+        Minute += 30;
         if(Minute > 60)
         {
-          Minute = Minute - 60;
-          Hour = Hour + 1;
+          Minute -= 60;
+          Hour += 1;
         }
-        Hour = Hour + 5;
+        Hour += 5;
         bool PMstatus = false;
         if(Hour > 12)
         {
           PMstatus = true;
-          Hour = Hour - 12;
+          Hour -= 12;
         }
         String strHour = String(Hour);
         String strMinute = String(Minute);
