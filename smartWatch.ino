@@ -75,7 +75,7 @@ void loop()
     display.print(temp);
     display.print(" ºC");
     
-    uploadDelay += 20;
+    uploadDelay += 200;
     delay(200);
     
     if(Serial.available() > 0)
