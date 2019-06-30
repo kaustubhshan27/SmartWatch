@@ -1,6 +1,7 @@
 ## Project Description
 
-Implemented a smart wearable in the form of a wrist watch. 
+Implemented a smart wearable in the form of a wrist watch. NodeMCU is used to upload data such as temperature, humidity, real time 
+GPS coordinates and ground speed of the individual to thingspeak.com. The features provided by thingspeak.com are used to display data in the form of graphs and real time data in a web based UI. Google Maps API is used to pinpoint the location using the GPS coordinates. The web based UI is hosted on Github.
 
 ## Components Used
 
@@ -9,41 +10,13 @@ Implemented a smart wearable in the form of a wrist watch.
 * NEO-6M GPS Module
 * 0.96 Inch OLED Display
 
-```markdown
-Syntax highlighted code block
+## Team Members
 
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
-```
-
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/kaustubhshan27/SmartWatch/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+- _Kaustubh Shankar_
+- _ _
+- _ _
+- _ _ 
 
 
-
-
-
-
-
-
-
-
-
+**Click below to view Smart Watch UI:**
+[Link](https://kaustubhshan27.github.io/SmartWatch/)
