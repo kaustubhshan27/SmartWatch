@@ -18,5 +18,5 @@ GPS coordinates and ground speed of the individual to thingspeak.com. The featur
 - _ _ 
 
 
-**Click below to view Smart Watch UI:**
-[Link](https://kaustubhshan27.github.io/SmartWatch/)
+**Click to view Smart Watch UI:**
+[smartWatch UI](https://kaustubhshan27.github.io/SmartWatch/)
