@@ -149,7 +149,9 @@ void loop()
     }
     String strSpeed = String(Speed, 2); 
     display.setCursor(0, 30);
+    display.print("Speed:  ");
     display.print(strSpeed);
+    display.print("m/s");
     
     display.display();//to actually display the text
 }
