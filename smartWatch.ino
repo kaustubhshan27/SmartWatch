@@ -45,7 +45,7 @@ void setup()
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
   
-  ThingSpeak.begin(client);
+  ThingSpeak.begin(client);//ThingSpeak is server. NodeMCU sending post request through HTTP.
   
   display.clearDisplay();//clear the display
   display.setTextColor(WHITE);//always use WHITE irrespective of actual color display
