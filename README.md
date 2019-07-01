@@ -1,7 +1,6 @@
 ## Project Description
 
-Implemented a smart wearable in the form of a wrist watch. NodeMCU is used to upload data such as temperature, humidity, real time 
-GPS coordinates and ground speed of the individual to thingspeak.com. The features provided by thingspeak.com are used to display data in the form of graphs and real time data in a web based UI. Google Maps API is used to pinpoint the location using the GPS coordinates. The web based UI is hosted on Github.
+Implemented a smart wearable in the form of a wrist watch. An OLED screen is used to display date, time, temperature, humidity and speed to the user. NodeMCU is used to upload data such as temperature, humidity, real time GPS coordinates and ground speed of the individual to seperate fields on ThingSpeak. The features provided by the ThingSpeak platform are used to display data in the form of graphs and real time data on a web based UI. Google Maps JavaScript API is used to pinpoint the location using the GPS coordinates received from the GPS module. The web based UI is hosted on Github.
 
 ## Components Used
 
@@ -9,14 +8,6 @@ GPS coordinates and ground speed of the individual to thingspeak.com. The featur
 * DHT11 Sensor
 * NEO-6M GPS Module
 * 0.96 Inch OLED Display
-
-## Team Members
-
-- _Kaustubh Shankar_
-- _ _
-- _ _
-- _ _ 
-
 
 **Click to view Smart Watch UI:**
 [smartWatch UI](https://kaustubhshan27.github.io/SmartWatch/UI)
