@@ -12,7 +12,7 @@ TinyGPSPlus gps;
 #define DHT11_Pin 2
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
 #define SCREEN_HEIGHT 64 // OLED display height, in pixels
-#define OLED_RESET     4 // Reset pin #, not required
+#define OLED_RESET LED_BUILTIN // Reset pin #, not required
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);//making 'display' object. We don't need OLED_RESET but have to define it to declare the object 
 
 char *ssid = "FCTP";
@@ -31,7 +31,7 @@ void setup()
 {
   Serial.begin(9600);
   Wire.begin();
-  display.begin(SSD1306_SWITCHCAPVCC, 0x3D);//0x3D is I2C address of display
+  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);//0x3C is I2C address of display
   dht.setup(DHT11_Pin, DHTesp::DHT11);//setup(uint8_t pin, DHT_MODEL_t model=AUTO_DETECT);
   WiFi.begin(ssid, pswd);
  
