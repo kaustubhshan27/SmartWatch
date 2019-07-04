@@ -1,12 +1,12 @@
 #include<DHTesp.h>
-#include <RtcDS3231.h>
+#include<RtcDS3231.h>
 #include<TinyGPS++.h>
 #include<ThingSpeak.h>
-#include <ESP8266WiFi.h>
-#include <Wire.h>
+#include<ESP8266WiFi.h>
+#include<Wire.h>
 #include<SoftwareSerial.h>
-#include <Adafruit_GFX.h>//Graphics library
-#include <Adafruit_SSD1306.h>//Library to control driver chip(SSD1306) in OLED display
+#include<Adafruit_GFX.h>//Graphics library
+#include<Adafruit_SSD1306.h>//Library to control driver chip(SSD1306) in OLED display
 
 DHTesp dht;
 TinyGPSPlus gps;
@@ -59,9 +59,9 @@ void setup()
   Serial.println(WiFi.localIP());
   
   ThingSpeak.begin(client);
-  //rtc.setDOW(THURSDAY);     // Set Day-of-Week to SUNDAY
-  //rtc.setTime(12, 0, 0);     // Set the time to 12:00:00 (24hr format)
-  //rtc.setDate(7, 4, 2019);   // Set the date to January 1st, 2014
+  //rtc.setDOW(THURSDAY);     // Set Day-of-Week 
+  //rtc.setTime(12, 0, 0);     // Set the time 
+  //rtc.setDate(7, 4, 2019);   // Set the date 
   
   display.clearDisplay();//clear the display
   display.setTextColor(WHITE);//always use WHITE irrespective of actual color display
