@@ -3,6 +3,7 @@
 #include<ThingSpeak.h>
 #include <ESP8266WiFi.h>
 #include <Wire.h>
+#include<SoftwareSerial.h>
 #include <Adafruit_GFX.h>//Graphics library
 #include <Adafruit_SSD1306.h>//Library to control driver chip(SSD1306) in OLED display
 
@@ -19,8 +20,12 @@ char *ssid = "FCTP";
 char *pswd = "W!F!_k@_p@$$w0rd";
 const char *api_key = "UDWGW2AFE8HCARQ8";
 unsigned long int myChannelNumber = 812997;
+static const int RXpin = 13;
+static const int TXpin = 12;
+static const int GPSbaud = 9600;
 
 WiFiClient client;
+SoftwareSerial ss(RXpin, TXpin);
 
 static int uploadDelay = 0;
 String today;
@@ -34,6 +39,7 @@ void setup()
   display.begin(SSD1306_SWITCHCAPVCC, 0x3C);//0x3C is I2C address of display
   dht.setup(DHT11_Pin, DHTesp::DHT11);//setup(uint8_t pin, DHT_MODEL_t model=AUTO_DETECT);
   WiFi.begin(ssid, pswd);
+  ss.begin(GPSbaud);
  
   while (WiFi.status() != WL_CONNECTED) 
   {
@@ -77,9 +83,9 @@ void loop()
     uploadDelay += 200;
     delay(200);
     
-    if(Serial.available() > 0)
+    if(ss.available() > 0)
     {
-      gps.encode(Serial.read());//have to repeatedly funnel the characters to TinyGPS++ from the GPS module using the encode() method to make it work.
+      gps.encode(ss.read());//have to repeatedly funnel the characters to TinyGPS++ from the GPS module using the encode() method to make it work.
       
       if(gps.location.isValid())//data goes to Google Maps API
       {
