@@ -27,7 +27,7 @@ unsigned long int myChannelNumber = 812997;
 
 SoftwareSerial ss(RXpin, TXpin);
 WiFiClient client;
-RtcDS3231<TwoWire> rtcObject(Wire);
+RtcDS3231<TwoWire> rtcObject(Wire);//class template for version 2.0.0 and later
 
 static int uploadDelay = 0;
 String today;
