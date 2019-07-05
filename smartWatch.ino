@@ -37,6 +37,8 @@ String today;
 String current_time;
 String day_of_week;
 float Speed;
+float temp;
+float hum;
 
 void setup()
 {
@@ -69,9 +71,8 @@ void setup()
 void loop()
 {
     timeClient.update();//to receive date and time from NTP servers
-      
-    float temp;
-    float hum;
+    display.clearDisplay();//clear the display
+  
     if(uploadDelay >= 1200)
     {
       temp = dht.getTemperature();
@@ -103,16 +104,9 @@ void loop()
       {
         double latitude = gps.location.lat();
         double longitude = gps.location.lng();
-        
-        Serial.print("latitude=");
-        Serial.println(latitude);
-        Serial.print("longitude=");
-        Serial.println(longitude);
 
         if(gps.location.isUpdated())
         {
-          Serial.println(latitude);
-          Serial.println(longitude);
           ThingSpeak.setField(4, float(latitude));
           ThingSpeak.setField(5, float(longitude));
           ThingSpeak.writeFields(myChannelNumber, api_key);
@@ -136,12 +130,14 @@ void loop()
       display.setCursor(0, 10);
       display.print("Date: ");
       display.print(today);
-      Serial.print("Date: ");
-      Serial.println(today);
 
       unsigned int Sec = timeClient.getSeconds();
       unsigned int Min = timeClient.getMinutes();
       unsigned int Hr = timeClient.getHours();
+      if(strMinute.length() == 1)
+      {
+        strMinute = "0" + strMinute;
+      }
       bool PMstatus = false;
       if(Hr >= 12)
       {
@@ -162,8 +158,6 @@ void loop()
       display.setCursor(0, 20);
       display.print("Time: "); 
       display.print(current_time);
-      Serial.print("Time: ");
-      Serial.println(current_time);
 
       if(gps.speed.isValid())//data goes to thingspeak.com
       {
@@ -175,11 +169,7 @@ void loop()
       display.setCursor(0, 30);
       display.print("Speed:  ");
       display.print(strSpeed);
-      display.print("m/s");
-
-      Serial.print("speed=");
-      Serial.println(strSpeed);
-    
+      display.print("m/s");    
     }
     
     display.display();//to actually display the text
