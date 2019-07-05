@@ -1,12 +1,13 @@
 #include<DHTesp.h>
-#include<RtcDS3231.h>
 #include<TinyGPS++.h>
 #include<ThingSpeak.h>
-#include<ESP8266WiFi.h>
-#include<Wire.h>
+#include <ESP8266WiFi.h>
+#include <Wire.h>
 #include<SoftwareSerial.h>
-#include<Adafruit_GFX.h>//Graphics library
-#include<Adafruit_SSD1306.h>//Library to control driver chip(SSD1306) in OLED display
+#include <WiFiUdp.h>
+#include <NTPClient.h>
+#include <Adafruit_GFX.h>//Graphics library
+#include <Adafruit_SSD1306.h>//Library to control driver chip(SSD1306) in OLED display
 
 DHTesp dht;
 TinyGPSPlus gps;
@@ -24,29 +25,29 @@ char *ssid = "FCTP";
 char *pswd = "W!F!_k@_p@$$w0rd";
 const char *api_key = "UDWGW2AFE8HCARQ8";
 unsigned long int myChannelNumber = 812997;
+char *days[] = {"SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"};
 
+WiFiUDP ntpUDP;//for UDP pakcet transfers 
+NTPClient timeClient(ntpUDP, "pool.ntp.org", 19800,60000);//"pool.ntp.org" gives servers from worldwide, UTC offset in seconds
 SoftwareSerial ss(RXpin, TXpin);
 WiFiClient client;
-RtcDS3231<TwoWire> rtcObject(Wire);//class template for version 2.0.0 and later
 
 static int uploadDelay = 0;
 String today;
 String current_time;
+String day_of_week;
 float Speed;
 
 void setup()
 {
-
   Serial.begin(9600);
   Wire.begin();
-  rtcObject.Begin();
-  RtcDateTime currentTime = RtcDateTime(19,07,04,21,23,30); //define date and time object
-  rtcObject.SetDateTime(currentTime);                      //configure the RTC with object
   ss.begin(GPSbaud);
   //SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
   display.begin(SSD1306_SWITCHCAPVCC, 0x3C);//0x3C is I2C address of display
   dht.setup(DHT11_Pin, DHTesp::DHT11);//setup(uint8_t pin, DHT_MODEL_t model=AUTO_DETECT);
   WiFi.begin(ssid, pswd);
+  timeClient.begin();
 
   while (WiFi.status() != WL_CONNECTED) 
   {
@@ -59,10 +60,7 @@ void setup()
   Serial.println(WiFi.localIP());
   
   ThingSpeak.begin(client);
-  //rtc.setDOW(THURSDAY);     // Set Day-of-Week 
-  //rtc.setTime(12, 0, 0);     // Set the time 
-  //rtc.setDate(7, 4, 2019);   // Set the date 
-  
+
   display.clearDisplay();//clear the display
   display.setTextColor(WHITE);//always use WHITE irrespective of actual color display
   display.setTextSize(1);//font size
@@ -70,7 +68,8 @@ void setup()
 
 void loop()
 {
-  
+    timeClient.update();//to receive date and time from NTP servers
+      
     float temp;
     float hum;
     if(uploadDelay >= 1200)
@@ -105,9 +104,9 @@ void loop()
         double latitude = gps.location.lat();
         double longitude = gps.location.lng();
         
-        Serial.print("latitude");
+        Serial.print("latitude=");
         Serial.println(latitude);
-        Serial.print("longitude");
+        Serial.print("longitude=");
         Serial.println(longitude);
 
         if(gps.location.isUpdated())
@@ -122,105 +121,50 @@ void loop()
         ThingSpeak.setField(5, float(longitude));
         ThingSpeak.writeFields(myChannelNumber, api_key);
       }
-      
-      RtcDateTime currentTime = rtcObject.GetDateTime();    //get the time from the RTC
 
-//Display date using RTC DS3231   
-      unsigned int Date = currentTime.Day();
-      unsigned int Mon = currentTime.Month();
-      unsigned int Yr = currentTime.Year();
-      String strDate = String(Date);
-      String strMonth = String(Mon);
-      String strYear = String(Yr).substring(2, 4);
-      today = strDate + "/" + strMonth + "/" + strYear;
+//NTP servers for date and time:
+      day_of_week = days[timeClient.getDay()];
       display.setCursor(0, 0);
+      display.print(day_of_week);
+
+      today = timeClient.getFormattedDate().substring(2, 10);
+
+      String strDate = today.substring(6, 8);
+      String strMonth = today.substring(3, 5);
+      String strYear = today.substring(0, 2);
+      today = strDate + "/" + strMonth + "/" + strYear;
+      display.setCursor(0, 10);
       display.print("Date: ");
       display.print(today);
+      Serial.print("Date: ");
+      Serial.println(today);
 
-
-//Display time using RTC DS3231
-      unsigned int Sec = currentTime.Second();
-      unsigned int Min = currentTime.Minute();
-      unsigned int Hr = currentTime.Hour();
+      unsigned int Sec = timeClient.getSeconds();
+      unsigned int Min = timeClient.getMinutes();
+      unsigned int Hr = timeClient.getHours();
       bool PMstatus = false;
-      if(Hr > 12)
+      if(Hr >= 12)
       {
         PMstatus = true;
-        Hr -= 12;
+        if(Hr != 12)
+          Hr -= 12;
       }
-      String strSec = String(Sec);
       String strMinute = String(Min);
       String strHour = String(Hr);
       if(PMstatus)
       { 
-        current_time = strHour + ":" + strMinute + ":" + strSec + " PM";
+        current_time = strHour + ":" + strMinute + " PM";
       }
       else
       {
-        current_time = strHour + ":" + strMinute + ":" + strSec + " AM";
+        current_time = strHour + ":" + strMinute + " AM";
       }           
-      display.setCursor(0, 10);
+      display.setCursor(0, 20);
       display.print("Time: "); 
       display.print(current_time);
+      Serial.print("Time: ");
+      Serial.println(current_time);
 
-//If you want to use GPS to display date and time:
-/*      
-      if(gps.date.isValid())//data goes to OLED screen display
-      {
-        unsigned int date = gps.date.day();
-        unsigned int month = gps.date.month();
-        unsigned int year = gps.date.year();
-        String strDate = String(date);
-        String strMonth = String(month);
-        String strYear = String(year).substring(2, 4);
-        today = strDate + "/" + strMonth + "/" + strYear;
-        
-      }
-      display.setCursor(0, 0);
-      display.print("Date: ");
-      display.print(today);
-
-      Serial.print("today=");
-      Serial.println(today);
-*/
-     
-/*
-      if(gps.time.isValid())//data goes to OLED screen display
-      {
-        unsigned int Hour = gps.time.hour();
-        unsigned int Minute = gps.time.minute();
-        Minute += 30;
-        if(Minute > 60)
-        {
-          Minute -= 60;
-          Hour += 1;
-        }
-        Hour += 5;
-        bool PMstatus = false;
-        if(Hour > 12)
-        {
-          PMstatus = true;
-          Hour -= 12;
-        }
-        String strHour = String(Hour);
-        String strMinute = String(Minute);
-        if(PMstatus)
-        { 
-          currentTime = strHour + ":" + strMinute + " PM";
-        }
-        else
-        {
-          currentTime = strHour + ":" + strMinute + " AM";
-        }
-      }
-      
-      display.setCursor(0, 10);
-      display.print("Time: ");
-      display.print(currentTime);
-      
-      Serial.print("currentTime=");
-      Serial.println(currentTime);
-*/      
       if(gps.speed.isValid())//data goes to thingspeak.com
       {
         Speed = gps.speed.mps();
@@ -233,7 +177,7 @@ void loop()
       display.print(strSpeed);
       display.print("m/s");
 
-      Serial.print("speed");
+      Serial.print("speed=");
       Serial.println(strSpeed);
     
     }
