@@ -11,3 +11,5 @@ Implemented a smart wearable in the form of a wrist watch. An OLED screen is use
 
 **Click to view Smart Watch UI:**
 [smartWatch UI](https://kaustubhshan27.github.io/SmartWatch/UI)
+**Click to see your current location:**
+[Google Maps](https://kaustubhshan27.github.io/SmartWatch/maps)
