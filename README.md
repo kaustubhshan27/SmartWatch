@@ -8,7 +8,6 @@ Implemented a smart wearable in the form of a wrist watch. An OLED screen is use
 * DHT11 Sensor
 * NEO-6M GPS Module
 * 0.96 Inch OLED Display
-* DS3231 RTC Module
 
 **Click to view Smart Watch UI:**
 [smartWatch UI](https://kaustubhshan27.github.io/SmartWatch/UI)
