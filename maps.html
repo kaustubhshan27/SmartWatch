@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Google Maps</title>
+    <title>ESP12E, Thingspeak, GPS and Google Map</title>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
     <style>
@@ -24,17 +24,17 @@
       var map;
         var x;
         function loadmaps(){
-            $.getJSON("https://api.thingspeak.com/channels/812997/fields/5/last.json?api_key=RCXU2AKL28S3T9QB", function(result){
-        	
-            var m = result;
-            x=Number(m.field5);
-                           //alert(x);
-
-        });
             $.getJSON("https://api.thingspeak.com/channels/812997/fields/4/last.json?api_key=RCXU2AKL28S3T9QB", function(result){
         	
             var m = result;
-            y=Number(m.field4);
+            x=Number(m.field4);
+                           //alert(x);
+
+        });
+            $.getJSON("https://api.thingspeak.com/channels/812997/fields/5/last.json?api_key=RCXU2AKL28S3T9QB", function(result){
+        	
+            var m = result;
+            y=Number(m.field5);
                 
                 
         }).done(function() {
