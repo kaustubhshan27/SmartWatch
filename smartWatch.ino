@@ -1,13 +1,13 @@
 #include<DHTesp.h>
 #include<TinyGPS++.h>
 #include<ThingSpeak.h>
-#include <ESP8266WiFi.h>
-#include <Wire.h>
+#include<ESP8266WiFi.h>
+#include<Wire.h>
 #include<SoftwareSerial.h>
-#include <WiFiUdp.h>
-#include <NTPClient.h>
-#include <Adafruit_GFX.h>//Graphics library
-#include <Adafruit_SSD1306.h>//Library to control driver chip(SSD1306) in OLED display
+#include<WiFiUdp.h>
+#include<NTPClient.h>
+#include<Adafruit_GFX.h>//Graphics library
+#include<Adafruit_SSD1306.h>//Library to control driver chip(SSD1306) in OLED display
 
 DHTesp dht;
 TinyGPSPlus gps;
@@ -32,18 +32,21 @@ NTPClient timeClient(ntpUDP, "pool.ntp.org", 19800,60000);//"pool.ntp.org" gives
 SoftwareSerial ss(RXpin, TXpin);
 WiFiClient client;
 
-static int uploadDelay = 0;
 String today;
 String current_time;
 String day_of_week;
-float Speed;
+float Speed = 0.00;
 float temp;
 float hum;
+String strSpeed;
+int uploadCount = 0;
 
 void setup()
 {
+
   Serial.begin(9600);
   Wire.begin();
+
   ss.begin(GPSbaud);
   //SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
   display.begin(SSD1306_SWITCHCAPVCC, 0x3C);//0x3C is I2C address of display
@@ -62,7 +65,7 @@ void setup()
   Serial.println(WiFi.localIP());
   
   ThingSpeak.begin(client);
-
+  
   display.clearDisplay();//clear the display
   display.setTextColor(WHITE);//always use WHITE irrespective of actual color display
   display.setTextSize(1);//font size
@@ -70,18 +73,56 @@ void setup()
 
 void loop()
 {
-    timeClient.update();//to receive date and time from NTP servers
     display.clearDisplay();//clear the display
-  
-    if(uploadDelay >= 1200)
+    timeClient.update();//to receive date and time from NTP servers
+    
+    while(ss.available() > 0)
     {
-      temp = dht.getTemperature();
-      hum = dht.getHumidity();
-      ThingSpeak.setField(1, temp);//int setField(unsigned int field, int value)
-      ThingSpeak.setField(2, hum);
-      ThingSpeak.writeFields(myChannelNumber, api_key);//int writeField(unsigned long channelNumber, unsigned int field, int value, const char * writeAPIKey)
-      uploadDelay = 0; 
+      if(gps.encode(ss.read()));//have to repeatedly funnel the characters to TinyGPS++ from the GPS module using the encode() method to make it work.
+      {
+        if(gps.location.isValid())//data goes to Google Maps API
+        {
+          double latitude = gps.location.lat();
+          double longitude = gps.location.lng();
+        
+          Serial.print(F("Location: ")); 
+          Serial.println(gps.location.lat(), 6);
+          Serial.print(F(","));
+          Serial.println(gps.location.lng(), 6);
+          
+          ThingSpeak.setField(4, float(latitude));
+          ThingSpeak.setField(5, float(longitude));
+          ThingSpeak.writeFields(myChannelNumber, api_key);
+          uploadCount++;
+        }
+        if(gps.speed.isValid())//data goes to thingspeak.com
+        {
+          Speed = gps.speed.mps();
+          Serial.println(gps.speed.mps(), 2);
+          ThingSpeak.setField(3, Speed);
+          ThingSpeak.writeFields(myChannelNumber, api_key);
+          uploadCount++;
+        }
+      }
+      if(uploadCount == 2)
+      {
+        uploadCount = 0;
+        break;
+      }
     }
+    
+    strSpeed = String(Speed, 2); 
+    display.setCursor(0, 30);
+    display.print("Speed:  ");
+    display.print(strSpeed);
+    display.print("m/s"); 
+
+    temp = dht.getTemperature();
+    hum = dht.getHumidity();
+    ThingSpeak.setField(1, temp);//int setField(unsigned int field, int value)
+    ThingSpeak.setField(2, hum);
+    ThingSpeak.writeFields(myChannelNumber, api_key);//int writeField(unsigned long channelNumber, unsigned int field, int value, const char * writeAPIKey)
+  
     String strTemp = String(temp, 0);
     String strHum = String(hum, 0);
     display.setCursor(0, 40);
@@ -93,30 +134,7 @@ void loop()
     display.print(strTemp);
     display.print("C");
     
-    uploadDelay += 200;
-    delay(200);
-    
-    if(ss.available() > 0)
-    {
-      gps.encode(ss.read());//have to repeatedly funnel the characters to TinyGPS++ from the GPS module using the encode() method to make it work.
-      
-      if(gps.location.isValid())//data goes to Google Maps API
-      {
-        double latitude = gps.location.lat();
-        double longitude = gps.location.lng();
-
-        if(gps.location.isUpdated())
-        {
-          ThingSpeak.setField(4, float(latitude));
-          ThingSpeak.setField(5, float(longitude));
-          ThingSpeak.writeFields(myChannelNumber, api_key);
-        }
-        ThingSpeak.setField(4, float(latitude));
-        ThingSpeak.setField(5, float(longitude));
-        ThingSpeak.writeFields(myChannelNumber, api_key);
-      }
-
-//NTP servers for date and time:
+//NTP server for date and time:
       day_of_week = days[timeClient.getDay()];
       display.setCursor(0, 0);
       display.print(day_of_week);
@@ -130,14 +148,11 @@ void loop()
       display.setCursor(0, 10);
       display.print("Date: ");
       display.print(today);
+      Serial.print("Date: ");
+      Serial.println(today);
 
-      unsigned int Sec = timeClient.getSeconds();
       unsigned int Min = timeClient.getMinutes();
       unsigned int Hr = timeClient.getHours();
-      if(strMinute.length() == 1)
-      {
-        strMinute = "0" + strMinute;
-      }
       bool PMstatus = false;
       if(Hr >= 12)
       {
@@ -146,6 +161,10 @@ void loop()
           Hr -= 12;
       }
       String strMinute = String(Min);
+      if(strMinute.length() == 1)
+      {
+        strMinute = "0" + strMinute;
+      }
       String strHour = String(Hr);
       if(PMstatus)
       { 
@@ -158,19 +177,8 @@ void loop()
       display.setCursor(0, 20);
       display.print("Time: "); 
       display.print(current_time);
+      Serial.print("Time: ");
+      Serial.println(current_time);
 
-      if(gps.speed.isValid())//data goes to thingspeak.com
-      {
-        Speed = gps.speed.mps();
-        ThingSpeak.setField(3, Speed);
-        ThingSpeak.writeFields(myChannelNumber, api_key);
-      }
-      String strSpeed = String(Speed, 2); 
-      display.setCursor(0, 30);
-      display.print("Speed:  ");
-      display.print(strSpeed);
-      display.print("m/s");    
+      display.display();//to actually display the text
     }
-    
-    display.display();//to actually display the text
-}
