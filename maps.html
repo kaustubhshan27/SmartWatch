@@ -24,17 +24,17 @@
       var map;
         var x;
         function loadmaps(){
-            $.getJSON("https://api.thingspeak.com/channels/812997/fields/1/last.json?api_key=RCXU2AKL28S3T9QB", function(result){
+            $.getJSON("https://api.thingspeak.com/channels/812997/fields/5/last.json?api_key=RCXU2AKL28S3T9QB", function(result){
         	
             var m = result;
-            x=Number(m.field1);
+            x=Number(m.field5);
                            //alert(x);
 
         });
-            $.getJSON("https://api.thingspeak.com/channels/812997/fields/2/last.json?api_key=RCXU2AKL28S3T9QB", function(result){
+            $.getJSON("https://api.thingspeak.com/channels/812997/fields/4/last.json?api_key=RCXU2AKL28S3T9QB", function(result){
         	
             var m = result;
-            y=Number(m.field2);
+            y=Number(m.field4);
                 
                 
         }).done(function() {
