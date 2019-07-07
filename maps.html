@@ -27,14 +27,14 @@
             $.getJSON("https://api.thingspeak.com/channels/812997/fields/1/last.json?api_key=RCXU2AKL28S3T9QB", function(result){
         	
             var m = result;
-            x=Number(m.field5);
+            x=Number(m.field1);
                            //alert(x);
 
         });
             $.getJSON("https://api.thingspeak.com/channels/812997/fields/2/last.json?api_key=RCXU2AKL28S3T9QB", function(result){
         	
             var m = result;
-            y=Number(m.field4);
+            y=Number(m.field2);
                 
                 
         }).done(function() {
