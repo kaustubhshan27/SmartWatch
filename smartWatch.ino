@@ -21,10 +21,10 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);//makin
 static const int RXpin = 13;
 static const int TXpin = 12;
 static const int GPSbaud = 9600;
-char *ssid = "FCTP";
-char *pswd = "W!F!_k@_p@$$w0rd";
-const char *api_key = "UDWGW2AFE8HCARQ8";
-unsigned long int myChannelNumber = 812997;
+//char *ssid = "";
+//char *pswd = "";
+//const char *api_key = "";
+//unsigned long int myChannelNumber = ;
 char *days[] = {"SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"};
 
 WiFiUDP ntpUDP;//for UDP pakcet transfers 
@@ -38,8 +38,9 @@ String day_of_week;
 float Speed = 0.00;
 float temp;
 float hum;
-String strSpeed;
+String strSpeed, strTemp, strHum;
 int uploadCount = 0;
+int uploadDelay;
 
 void setup()
 {
@@ -117,14 +118,20 @@ void loop()
     display.print(strSpeed);
     display.print("m/s"); 
 
-    temp = dht.getTemperature();
-    hum = dht.getHumidity();
-    ThingSpeak.setField(1, temp);//int setField(unsigned int field, int value)
-    ThingSpeak.setField(2, hum);
-    ThingSpeak.writeFields(myChannelNumber, api_key);//int writeField(unsigned long channelNumber, unsigned int field, int value, const char * writeAPIKey)
+    if(uploadDelay > 1200)
+    {
+      temp = dht.getTemperature();
+      hum = dht.getHumidity();
+      ThingSpeak.setField(1, temp);//int setField(unsigned int field, int value)
+      ThingSpeak.setField(2, hum);
+      ThingSpeak.writeFields(myChannelNumber, api_key);//int writeField(unsigned long channelNumber, unsigned int field, int value, const char * writeAPIKey) 
+      uploadDelay = 0; 
+    }
+    delay(200);
+    uploadDelay += 200;
   
-    String strTemp = String(temp, 0);
-    String strHum = String(hum, 0);
+    strTemp = String(temp, 0);
+    strHum = String(hum, 0);
     display.setCursor(0, 40);
     display.print("Humidity: ");
     display.print(strHum);
@@ -181,4 +188,4 @@ void loop()
       Serial.println(current_time);
 
       display.display();//to actually display the text
-    }
+}
